@@ -97,8 +97,16 @@
     script.onload = () => {
       createUnityInstance(canvas, config, (progress) => {
         progressBarFull.style.width = 100 * progress + "%";
-      }).then((unityInstance) => {
+      .then((unityInstance) => {
         loadingBar.style.display = "none";
+        loadingText.style.display = "none";
+      
+        // Sync save data to IndexedDB every second, like Hollow Knight does
+        setInterval(function() {
+          if (unityInstance.Module && unityInstance.Module.FS) {
+            unityInstance.Module.FS.syncfs(false, function(err) {});
+          }
+        }, 1000);
       }).catch((message) => {
         console.error(message);
       });
